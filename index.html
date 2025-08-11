@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Donate — Checkout & Dashboard (Asia, Russia, Belarus only)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: #111836;
+      --panel-2: #0e1530;
+      --text: #eaf0ff;
+      --muted: #9db0d6;
+      --accent: #6be675;
+      --accent-2: #5ad;
+      --danger: #ff5d5d;
+      --warn: #ffb020;
+      --border: #2a3a6b;
+      --shadow: 0 8px 30px rgba(0,0,0,.35);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --focus: 0 0 0 3px color-mix(in oklch, var(--accent) 35%, transparent);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      --ok: #39d98a;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f7fb; --panel:#fff; --panel-2:#fafbff; --text:#0b1020; --muted:#4a5878; --border:#e2e8ff; --shadow: 0 10px 30px rgba(12,20,60,.08)
+      }
+    }
+    html,body{height:100%}
+    body{
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(90,170,255,.18), transparent 60%),
+                  radial-gradient(1200px 800px at 110% 20%, rgba(107,230,117,.13), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      margin:0; font: 15px/1.5 var(--font);
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    .wrap{max-width: 1100px; margin: 28px auto; padding: 0 16px;}
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px}
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:38px; height:38px; border-radius:10px; background:
+        radial-gradient(120% 120% at -20% -20%, #6be675 0 44%, transparent 45%),
+        radial-gradient(130% 130% at 120% 30%, #5ad 0 45%, transparent 46%),
+        linear-gradient(160deg, color-mix(in oklch, #6be675 35%, transparent), transparent);
+      box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.15), 0 6px 16px rgba(0,0,0,.25);
+    }
+    h1{font-size:18px; margin:0}
+    .sub{color: var(--muted); font-size: 13px}
+    .banner{
+      border:1px solid var(--border); padding:12px 14px; border-radius: var(--radius);
+      background: color-mix(in oklch, var(--panel) 85%, transparent);
+      display:flex; align-items: center; gap:10px; margin-bottom:18px
+    }
+    .chip{
+      font: 700 11px/1 var(--font); letter-spacing:.3px; text-transform: uppercase;
+      padding:6px 8px; border-radius: 999px; border:1px solid
+    }
+    .chip.ok{ color: #0e6; background: color-mix(in oklch, #0e6 8%, transparent); border-color: color-mix(in oklch, #0e6 40%, transparent) }
+    .chip.no{ color: var(--danger); background: color-mix(in oklch, var(--danger) 8%, transparent); border-color: color-mix(in oklch, var(--danger) 40%, transparent) }
+    .row{display:flex; gap:10px; align-items:center; flex-wrap: wrap}
+    .btn{
+      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius: 10px;
+      border:1px solid var(--border); background: linear-gradient(180deg, color-mix(in oklch, var(--panel) 95%, transparent), color-mix(in oklch, var(--panel-2) 90%, transparent));
+      color: var(--text); cursor:pointer; transition: .15s transform ease, .15s background ease;
+      text-decoration:none; user-select:none;
+    }
+    .btn.primary{ background: linear-gradient(180deg, color-mix(in oklch, var(--accent) 22%, transparent), transparent);
+      border-color: color-mix(in oklch, var(--accent) 55%, var(--border)); color: #072; font-weight:700 }
+    .btn:disabled{ opacity:.6; cursor:not-allowed }
+    .btn:hover{ transform: translateY(-1px) }
+    .muted{color: var(--muted)}
+    .small{font-size:12px}
+    .hr{height:1px; background: var(--border); margin: 14px 0}
+    .card{
+      background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+      padding: 18px; margin-bottom: 18px;
+    }
+    .grid{display:grid; grid-template-columns: repeat(12,1fr); gap:14px}
+    .col-6{grid-column: span 6}
+    .col-4{grid-column: span 4}
+    .col-3{grid-column: span 3}
+    .col-8{grid-column: span 8}
+    .col-12{grid-column: span 12}
+    @media (max-width: 880px){ .col-6,.col-8,.col-4,.col-3{grid-column: span 12} }
+
+    label{display:block; font-size:12px; color:var(--muted); margin: 0 0 6px}
+    input[type="text"], input[type="number"], input[type="email"], select, textarea{
+      width:100%; box-sizing: border-box; background: var(--panel-2);
+      border:1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: var(--radius-sm);
+      outline: none;
+    }
+    textarea{min-height: 84px; resize: vertical}
+    input:focus, select:focus, textarea:focus{ box-shadow: var(--focus); border-color: color-mix(in oklch, var(--accent-2) 45%, var(--border))}
+    code.inline{background: var(--panel-2); border:1px solid var(--border); padding:2px 6px; border-radius: 6px}
+    .mono{font-family: var(--mono); letter-spacing:.2px}
+    .pill{border:1px solid var(--border); background: var(--panel-2); padding:5px 8px; border-radius: 999px; font-size:11px}
+    .tag{font: 700 10.5px/1 var(--font); letter-spacing:.3px; text-transform: uppercase; border:1px solid var(--border); background: var(--panel-2); padding:4px 6px; border-radius: 8px}
+    .good{color: #2ecc71; border-color: color-mix(in oklch, #2ecc71 35%, var(--border)); background: color-mix(in oklch, #2ecc71 7%, var(--panel-2))}
+    .bad{color: var(--danger); border-color: color-mix(in oklch, var(--danger) 35%, var(--border)); background: color-mix(in oklch, var(--danger) 7%, var(--panel-2))}
+    .list{display:flex; flex-direction: column; gap:10px}
+    .item{
+      border:1px solid var(--border); border-radius: 12px; padding:12px;
+      background: linear-gradient(180deg, color-mix(in oklch, var(--panel) 92%, transparent), transparent 90%);
+      display:grid; grid-template-columns: 1fr auto; gap:8px;
+    }
+    .actions{display:flex; gap:8px; align-items: center; justify-content: flex-end}
+    .sr{position:absolute !important; height:1px; width:1px; overflow:hidden; clip: rect(1px,1px,1px,1px); white-space:nowrap}
+    .tabs{display:flex; gap:8px; margin-bottom:8px}
+    .tab-btn{padding:8px 10px; border-radius:9px; border:1px solid var(--border); background: var(--panel-2); cursor:pointer}
+    .tab-btn.active{border-color: color-mix(in oklch, var(--accent) 55%, var(--border)); outline: var(--focus)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Donate — Checkout & Dashboard</h1>
+          <div class="sub">Requires publishable key. Available only in Asia, Russia, and Belarus. No external APIs.</div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn" id="exportLedger">⬇️ Export ledger</button>
+        <label class="btn" title="Import ledger JSON">
+          ⬆️ Import ledger
+          <input class="sr" type="file" id="importLedgerFile" accept="application/json" />
+        </label>
+      </div>
+    </header>
+
+    <div id="regionBanner" class="banner">
+      <span class="chip">Checking region…</span>
+      <span>Detecting availability…</span>
+    </div>
+
+    <section class="card">
+      <h2>1) Initialize with a publishable key</h2>
+      <div class="grid">
+        <div class="col-8">
+          <label for="pkInput">Publishable key (pk_dnt_…)</label>
+          <input id="pkInput" type="text" placeholder="pk_dnt_live_RU_xxxxxxxxxxxxxxxxxxxx" />
+          <div class="row small muted" style="margin-top:6px">
+            <span>Tip: Append ?pk=your_key to the URL for auto-load.</span>
+          </div>
+        </div>
+        <div class="col-4">
+          <label>&nbsp;</label>
+          <div class="row">
+            <button id="usePkBtn" class="btn primary">Use key</button>
+            <button id="clearPkBtn" class="btn">Clear</button>
+          </div>
+        </div>
+
+        <div class="col-12" id="savedKeysWrap" style="display:none">
+          <label>Pick from keys stored by the generator (same origin)</label>
+          <div class="row" id="savedKeysRow"></div>
+          <div class="small muted">Keys never leave your device.</div>
+        </div>
+
+        <div class="col-12">
+          <div id="pkStatus" class="small muted">No key in use.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="donateTab">Donor checkout</button>
+      <button class="tab-btn" data-tab="dashboardTab">Admin dashboard</button>
+      <button class="tab-btn" data-tab="embedTab">Embed</button>
+    </div>
+
+    <!-- Donor -->
+    <section id="donateTab" class="card" aria-live="polite">
+      <h2>2) Donation checkout</h2>
+      <div class="grid">
+        <div class="col-4">
+          <label for="orgName">Organization/Cause name</label>
+          <input id="orgName" type="text" placeholder="My Project" />
+        </div>
+        <div class="col-4">
+          <label for="currency">Currency</label>
+          <select id="currency">
+            <option>RUB</option><option>BYN</option><option>INR</option><option>CNY</option><option>JPY</option>
+            <option>KRW</option><option>KZT</option><option>UZS</option><option>IDR</option><option>THB</option>
+            <option>VND</option><option>MYR</option><option>SGD</option><option>PHP</option><option>TWD</option>
+            <option>HKD</option><option>AED</option><option>SAR</option><option>TRY</option><option>ILS</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label for="amount">Amount</label>
+          <input id="amount" type="number" min="1" step="0.01" placeholder="100.00" />
+        </div>
+
+        <div class="col-6">
+          <label for="donorName">Your name (optional)</label>
+          <input id="donorName" type="text" placeholder="Alice" />
+        </div>
+        <div class="col-6">
+          <label for="donorEmail">Email for receipt (optional)</label>
+          <input id="donorEmail" type="email" placeholder="name@example.com" />
+        </div>
+        <div class="col-12">
+          <label for="message">Message (optional)</label>
+          <textarea id="message" placeholder="Leave a note for the creator…"></textarea>
+        </div>
+
+        <div class="col-12 row" style="justify-content: space-between;">
+          <div class="small muted">
+            Donations here are simulated and stored locally. No real payment is processed.
+          </div>
+          <button id="donateBtn" class="btn primary" disabled>Donate now</button>
+        </div>
+      </div>
+
+      <div id="receipt" class="card" style="display:none; margin-top:14px">
+        <h3>Receipt</h3>
+        <div class="grid">
+          <div class="col-6">
+            <div class="mono"><span class="muted">Donation ID:</span> <code class="inline" id="r_id"></code></div>
+            <div><span class="muted small">Status:</span> <span id="r_status" class="tag good">succeeded</span></div>
+            <div class="small muted">Created: <span id="r_created"></span></div>
+          </div>
+          <div class="col-6">
+            <div><span class="muted small">Amount:</span> <span id="r_amount"></span></div>
+            <div class="small"><span class="muted">For:</span> <span id="r_org"></span></div>
+            <div class="small"><span class="muted">Publishable key:</span> <code id="r_pk" class="inline mono"></code></div>
+          </div>
+          <div class="col-12 row" style="justify-content:flex-end">
+            <button id="closeReceipt" class="btn">Close</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin -->
+    <section id="dashboardTab" class="card" style="display:none">
+      <h2>3) Admin dashboard (local)</h2>
+      <div class="grid">
+        <div class="col-8">
+          <label for="skInput">Secret key (sk_dnt_…)</label>
+          <input id="skInput" type="text" placeholder="sk_dnt_live_RU_xxxxxxxxxxxxxxx" />
+          <div class="small muted" style="margin-top:6px">
+            Paste the secret key to verify ownership of the current publishable key. Never ship secret keys to production clients.
+          </div>
+        </div>
+        <div class="col-4">
+          <label>&nbsp;</label>
+          <div class="row">
+            <button id="verifySkBtn" class="btn primary">Verify</button>
+            <button id="clearSkBtn" class="btn">Clear</button>
+          </div>
+        </div>
+
+        <div class="col-12" id="skStatus" class="small"></div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="row small muted">
+        <span>Ledger shows donations for the current publishable key.</span>
+      </div>
+      <div id="emptyLedger" class="muted">No donations yet.</div>
+      <div id="ledgerList" class="list"></div>
+    </section>
+
+    <!-- Embed -->
+    <section id="embedTab" class="card" style="display:none">
+      <h2>Embed this checkout</h2>
+      <div class="grid">
+        <div class="col-12">
+          <div class="small muted">Host this file anywhere and pass your publishable key by query string:</div>
+          <pre class="mono" style="white-space: pre-wrap; background: var(--panel-2); border:1px solid var(--border); padding:10px; border-radius:10px"><code>&lt;iframe
+  src="https://yourdomain.example/donate.html?pk=pk_dnt_live_RU_XXXXXXXXXXXXXX"
+  width="420"
+  height="560"
+  style="border:0; max-width:100%"&gt;&lt;/iframe&gt;</code></pre>
+          <div class="small muted">You can also prefill org name: &amp;org=My%20Project</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer row" style="justify-content: space-between; margin-top:12px">
+      <div class="small muted">
+        Region availability is best-effort via timezone/locale. Enforce on server in production. This is a local demo (no network).
+      </div>
+      <div class="row small muted">
+        <span class="pill">v1</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    ;(() => {
+      // ----------------- Region gating (same policy as generator) -----------------
+      const allowedEuropeZones = new Set([
+        "Europe/Kaliningrad","Europe/Moscow","Europe/Samara","Europe/Volgograd","Europe/Astrakhan","Europe/Ulyanovsk","Europe/Kirov","Europe/Minsk",
+        "Europe/Istanbul"
+      ]);
+      const ALLOWED_COUNTRIES = new Set([
+        "RU","BY","AE","AF","AM","AZ","BH","CY","GE","IQ","IR","JO","IL","PS","SA","SY","TR","QA","KW","OM","YE","LB",
+        "KZ","KG","UZ","TM","TJ",
+        "IN","PK","BD","LK","NP","MV","BT",
+        "CN","HK","MO","TW","JP","KR","KP","MN",
+        "ID","MY","SG","PH","TH","VN","KH","LA","MM","BN","TL"
+      ]);
+      const US_TIMEZONE_ALIASES = new Set(["US/Eastern","US/Central","US/Mountain","US/Pacific","US/Alaska","US/Hawaii"]);
+      const US_ZONES = new Set([
+        "America/New_York","America/Detroit","America/Kentucky/Louisville","America/Kentucky/Monticello","America/Indiana/Indianapolis","America/Indiana/Vincennes","America/Indiana/Winamac","America/Indiana/Marengo","America/Indiana/Petersburg","America/Indiana/Vevay","America/Chicago","America/Indiana/Knox","America/Menominee","America/North_Dakota/Center","America/North_Dakota/New_Salem","America/North_Dakota/Beulah","America/Denver","America/Boise","America/Phoenix","America/Los_Angeles","America/Anchorage","America/Juneau","America/Sitka","America/Metlakatla","America/Yakutat","America/Nome","America/Adak","Pacific/Honolulu"
+      ]);
+      function getLocaleCountry() {
+        const list = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+        for (const l of list) { if (!l) continue; const m = l.match(/[-_](\w{2})/); if (m) return m[1].toUpperCase(); }
+        return "";
+      }
+      function detectRegion() {
+        const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "").trim();
+        const country = getLocaleCountry();
+        const tzAllowed = tz.startsWith("Asia/") || allowedEuropeZones.has(tz);
+        const tzBlockedUS = US_ZONES.has(tz) || US_TIMEZONE_ALIASES.has(tz);
+        const tzBlockedEU = tz.startsWith("Europe/") && !allowedEuropeZones.has(tz);
+        let allowed = false, by = "unknown";
+        if (tz) {
+          if (tzBlockedUS) { allowed = false; by = `timezone=${tz} (US)`; }
+          else if (tzBlockedEU) { allowed = false; by = `timezone=${tz} (Europe not allowed)`; }
+          else if (tzAllowed) { allowed = true; by = `timezone=${tz}`; }
+          else { allowed = false; by = `timezone=${tz} (outside allowed regions)`; }
+        } else if (country) {
+          allowed = ALLOWED_COUNTRIES.has(country);
+          by = `locale=${country}`;
+        } else { allowed = false; by = "no timezone/locale"; }
+        return { allowed, by, tz, country };
+      }
+      function setRegionUI(state){
+        const banner = document.getElementById("regionBanner");
+        banner.innerHTML = "";
+        const chip = document.createElement("span");
+        chip.className = "chip " + (state.allowed ? "ok" : "no");
+        chip.textContent = state.allowed ? "Available" : "Not available";
+        const txt = document.createElement("span");
+        txt.innerHTML = state.allowed
+          ? `Service is available in your region. <span class="muted">(${state.by})</span>`
+          : `Service is not available in your region. Only Asia, Russia, and Belarus are allowed. <span class="muted">(${state.by})</span>`;
+        banner.appendChild(chip); banner.appendChild(txt);
+
+        // Disable donation if blocked
+        document.getElementById("donateBtn").disabled = !state.allowed || !getCurrentPk();
+      }
+
+      // ----------------- Key parsing/verification -----------------
+      function parsePk(pk){
+        const m = /^pk_dnt_(live|test)_([A-Z]{2})_([A-Za-z0-9\-_]{8,})$/.exec((pk||"").trim());
+        if (!m) return null;
+        return { raw: pk.trim(), env: m[1], region: m[2], kid: m[3] };
+      }
+      function parseSk(sk){
+        const m = /^sk_dnt_(live|test)_([A-Z]{2})_([A-Za-z0-9\-_]{16,})$/.exec((sk||"").trim());
+        if (!m) return null;
+        return { raw: sk.trim(), env: m[1], region: m[2], secretB64u: m[3] };
+      }
+      function b64urlToBytes(s){
+        s = s.replace(/-/g,'+').replace(/_/g,'/');
+        const pad = s.length % 4 ? 4 - (s.length % 4) : 0;
+        if (pad) s += '='.repeat(pad);
+        const bin = atob(s);
+        const out = new Uint8Array(bin.length);
+        for (let i=0;i<bin.length;i++) out[i] = bin.charCodeAt(i);
+        return out;
+      }
+      function b64url(bytes){
+        let bin = ""; for (let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+        return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+      }
+      async function sha256(bytes){ const d = await crypto.subtle.digest("SHA-256", bytes); return new Uint8Array(d); }
+
+      async function kidFromSecret(skRaw){
+        const sk = parseSk(skRaw); if (!sk) throw new Error("Invalid secret key");
+        const bytes = b64urlToBytes(sk.secretB64u);
+        const h = await sha256(bytes);
+        return b64url(h).slice(0,22);
+      }
+
+      // ----------------- Storage -----------------
+      const STORE_LEDGER = "donate_ledger_v1";
+      const STORE_PK = "donate_current_pk_v1";
+      const STORE_SETTINGS = "donate_site_settings_v1";
+      function loadLedger(){
+        try { const raw = localStorage.getItem(STORE_LEDGER); const v = raw ? JSON.parse(raw) : []; return Array.isArray(v)?v:[]; } catch(e){ return []; }
+      }
+      function saveLedger(arr){ localStorage.setItem(STORE_LEDGER, JSON.stringify(arr)); }
+      function addDonation(entry){ const arr = loadLedger(); arr.unshift(entry); saveLedger(arr); }
+
+      function setCurrentPk(pk){ localStorage.setItem(STORE_PK, pk); }
+      function getCurrentPk(){ return localStorage.getItem(STORE_PK) || ""; }
+      function clearCurrentPk(){ localStorage.removeItem(STORE_PK); }
+
+      function loadSettings(){
+        try { return JSON.parse(localStorage.getItem(STORE_SETTINGS)) || {}; } catch(e){ return {}; }
+      }
+      function saveSettings(s){ localStorage.setItem(STORE_SETTINGS, JSON.stringify(s)); }
+
+      // ----------------- UI helpers -----------------
+      function qs(id){ return document.getElementById(id); }
+      function setPkStatus(pkObj){
+        const el = qs("pkStatus");
+        if (!pkObj) { el.innerHTML = "No key in use."; return; }
+        el.innerHTML = `Using <code class="inline mono">${pkObj.raw}</code> — <span class="pill">${pkObj.env}</span> <span class="pill">${pkObj.region}</span>`;
+      }
+      function fmtAmount(minor, ccy){
+        const dec = ({JPY:0, KRW:0, VND:0, UZS:0, IDR:0}[ccy] ?? 2);
+        const value = minor / (10 ** dec);
+        const nf = new Intl.NumberFormat(undefined, {minimumFractionDigits: dec, maximumFractionDigits: dec});
+        return `${ccy} ${nf.format(value)}`;
+      }
+      function toMinor(amountStr, ccy){
+        const dec = ({JPY:0, KRW:0, VND:0, UZS:0, IDR:0}[ccy] ?? 2);
+        const n = Number(amountStr);
+        if (!isFinite(n) || n <= 0) return null;
+        return Math.round(n * (10 ** dec));
+      }
+      function newId(prefix){
+        const b = new Uint8Array(9); crypto.getRandomValues(b);
+        return `${prefix}_${b64url(b)}`;
+      }
+
+      function summaryForPk(pkObj){
+        const list = loadLedger().filter(x => x.pkKid === pkObj.kid && x.pkEnv === pkObj.env && x.pkRegion === pkObj.region);
+        const totals = {};
+        for (const d of list){
+          if (d.status !== "succeeded") continue;
+          totals[d.currency] = (totals[d.currency] || 0) + d.amountMinor;
+        }
+        return { count: list.length, totals, list };
+      }
+
+      function renderLedger(pkObj, verified){
+        const container = qs("ledgerList");
+        const empty = qs("emptyLedger");
+        container.innerHTML = "";
+        if (!pkObj){ empty.textContent = "Set a publishable key first."; return; }
+        const { list } = summaryForPk(pkObj);
+        if (!list.length){ empty.style.display = "block"; empty.textContent = "No donations yet."; return; }
+        empty.style.display = "none";
+
+        for (const d of list){
+          const item = document.createElement("div");
+          item.className = "item";
+          const left = document.createElement("div");
+          const right = document.createElement("div"); right.className = "actions";
+
+          const title = document.createElement("div");
+          title.innerHTML = `<strong>${fmtAmount(d.amountMinor, d.currency)}</strong> · <span class="pill">${d.status}</span> ${d.refundedAt ? '<span class="tag bad">refunded</span>' : ''}`;
+          const sub = document.createElement("div");
+          sub.className = "small muted mono";
+          sub.textContent = `${d.id} · ${new Date(d.created).toLocaleString()} · ${d.donorEmail || d.donorName || "anonymous"}`;
+
+          const meta = document.createElement("div");
+          meta.className = "small muted";
+          meta.textContent = d.message ? `“${d.message}”` : "";
+
+          left.appendChild(title); left.appendChild(sub); if (d.message) left.appendChild(meta);
+
+          const refundBtn = document.createElement("button");
+          refundBtn.className = "btn";
+          refundBtn.textContent = d.status === "succeeded" && !d.refundedAt ? "Refund" : "Refunded";
+          refundBtn.disabled = !verified || d.refundedAt || d.status !== "succeeded";
+          refundBtn.onclick = () => {
+            const arr = loadLedger();
+            const idx = arr.findIndex(x => x.id === d.id);
+            if (idx >= 0){
+              arr[idx].refundedAt = Date.now();
+              arr[idx].status = "refunded";
+              saveLedger(arr);
+              renderLedger(pkObj, verified);
+            }
+          };
+
+          right.appendChild(refundBtn);
+          item.appendChild(left); item.appendChild(right);
+          container.appendChild(item);
+        }
+      }
+
+      function renderSavedKeysQuickPick(){
+        const wrap = qs("savedKeysWrap");
+        const row = qs("savedKeysRow"); row.innerHTML = "";
+        let keys = [];
+        try {
+          const arr = JSON.parse(localStorage.getItem("donate_keys_v1"));
+          if (Array.isArray(arr)) keys = arr;
+        } catch(e) {}
+        if (!keys.length){ wrap.style.display = "none"; return; }
+        wrap.style.display = "block";
+        for (const k of keys.slice(0,6)){
+          const btn = document.createElement("button");
+          btn.className = "btn";
+          btn.title = k.meta?.label || "";
+          btn.textContent = (k.meta?.label ? `${k.meta.label} — ` : "") + k.id.slice(0, 24) + "…";
+          btn.onclick = () => {
+            qs("pkInput").value = k.id;
+            usePk();
+          };
+          row.appendChild(btn);
+        }
+      }
+
+      // ----------------- Actions -----------------
+      async function usePk(){
+        const raw = (qs("pkInput").value || "").trim() || (new URL(location.href).searchParams.get("pk")||"");
+        const pkObj = parsePk(raw);
+        if (!pkObj){ alert("Invalid publishable key format."); return; }
+        setCurrentPk(pkObj.raw);
+        setPkStatus(pkObj);
+        // Prefill org name from URL
+        const org = new URL(location.href).searchParams.get("org");
+        if (org) qs("orgName").value = decodeURIComponent(org);
+        const regionState = detectRegion();
+        qs("donateBtn").disabled = !regionState.allowed ? true : false;
+        // Reflect test mode
+        if (pkObj.env === "test"){
+          qs("donateBtn").textContent = "Donate now (Test mode)";
+        } else {
+          qs("donateBtn").textContent = "Donate now";
+        }
+        renderLedger(pkObj, false);
+      }
+      function clearPk(){
+        clearCurrentPk();
+        setPkStatus(null);
+        qs("donateBtn").disabled = true;
+        renderLedger(null, false);
+      }
+
+      function updateSettingsUI(){
+        const s = loadSettings();
+        if (s.orgName) qs("orgName").value = s.orgName;
+        if (s.currency) qs("currency").value = s.currency;
+      }
+
+      function saveSettingsFromUI(){
+        const s = loadSettings();
+        s.orgName = qs("orgName").value.trim();
+        s.currency = qs("currency").value;
+        saveSettings(s);
+      }
+
+      function resetReceipt(){
+        qs("receipt").style.display = "none";
+      }
+
+      function showReceipt(d, pkRaw){
+        qs("receipt").style.display = "block";
+        qs("r_id").textContent = d.id;
+        qs("r_status").textContent = d.status;
+        qs("r_status").className = "tag " + (d.status === "succeeded" ? "good" : (d.status === "refunded" ? "bad" : ""));
+        qs("r_created").textContent = new Date(d.created).toLocaleString();
+        qs("r_amount").textContent = fmtAmount(d.amountMinor, d.currency);
+        qs("r_org").textContent = d.orgName || "—";
+        qs("r_pk").textContent = pkRaw;
+      }
+
+      async function verifySkAgainstCurrent(){
+        const pkRaw = getCurrentPk();
+        const pkObj = parsePk(pkRaw);
+        if (!pkObj){ alert("Set a publishable key first."); return { ok:false }; }
+        const skRaw = qs("skInput").value.trim();
+        const skObj = parseSk(skRaw);
+        if (!skObj){ qs("skStatus").innerHTML = '<span class="tag bad">Invalid secret key</span>'; return { ok:false }; }
+        if (skObj.env !== pkObj.env || skObj.region !== pkObj.region){
+          qs("skStatus").innerHTML = '<span class="tag bad">Key env/region mismatch</span>';
+          return { ok:false };
+        }
+        try{
+          const kid = await kidFromSecret(skRaw);
+          if (kid !== pkObj.kid){
+            qs("skStatus").innerHTML = '<span class="tag bad">Secret does not match publishable key</span>';
+            return { ok:false };
+          }
+          qs("skStatus").innerHTML = '<span class="tag good">Verified — secret matches publishable key</span>';
+          return { ok:true };
+        }catch(e){
+          qs("skStatus").innerHTML = '<span class="tag bad">Verification error</span>';
+          return { ok:false };
+        }
+      }
+
+      // ----------------- Event bindings -----------------
+      qs("usePkBtn").onclick = usePk;
+      qs("clearPkBtn").onclick = () => { qs("pkInput").value = ""; clearPk(); };
+      qs("verifySkBtn").onclick = async () => {
+        const ok = await verifySkAgainstCurrent();
+        const pkObj = parsePk(getCurrentPk());
+        renderLedger(pkObj, ok.ok);
+      };
+      qs("clearSkBtn").onclick = () => { qs("skInput").value = ""; qs("skStatus").innerHTML = ""; const pkObj = parsePk(getCurrentPk()); renderLedger(pkObj, false); };
+      qs("closeReceipt").onclick = resetReceipt;
+
+      // Tabs
+      Array.from(document.querySelectorAll(".tab-btn")).forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          document.querySelectorAll("section.card").forEach(sec => {
+            if (["donateTab","dashboardTab","embedTab"].includes(sec.id)){
+              sec.style.display = sec.id === btn.dataset.tab ? "block" : "none";
+            }
+          });
+        };
+      });
+
+      // Donation submission
+      qs("donateBtn").onclick = async (e) => {
+        e.preventDefault();
+        const regionState = detectRegion();
+        if (!regionState.allowed){ alert("Donations are not available in your region."); return; }
+
+        const pkRaw = getCurrentPk();
+        const pkObj = parsePk(pkRaw);
+        if (!pkObj){ alert("Set a publishable key first."); return; }
+
+        const orgName = qs("orgName").value.trim();
+        const currency = qs("currency").value;
+        const amountStr = qs("amount").value;
+        const donorName = qs("donorName").value.trim();
+        const donorEmail = qs("donorEmail").value.trim();
+        const message = qs("message").value.trim();
+
+        const minor = toMinor(amountStr, currency);
+        if (minor === null){ alert("Enter a valid positive amount."); return; }
+        if (minor > 1e12){ alert("Amount too large."); return; }
+
+        const donation = {
+          id: newId("dn"),
+          pk: pkObj.raw,
+          pkKid: pkObj.kid,
+          pkEnv: pkObj.env,
+          pkRegion: pkObj.region,
+          created: Date.now(),
+          currency,
+          amountMinor: minor,
+          orgName,
+          donorName: donorName || null,
+          donorEmail: donorEmail || null,
+          message: message || null,
+          status: "succeeded" // simulated success
+        };
+        addDonation(donation);
+        showReceipt(donation, pkObj.raw);
+        // reset inputs (keep org/currency)
+        qs("amount").value = "";
+        qs("donorName").value = "";
+        qs("donorEmail").value = "";
+        qs("message").value = "";
+        // Refresh ledger if admin tab open
+        renderLedger(pkObj, false);
+      };
+
+      // Export / Import ledger
+      qs("exportLedger").onclick = () => {
+        const data = { exportedAt: new Date().toISOString(), ledger: loadLedger() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,"-");
+        a.href = url; a.download = `donate-ledger-${ts}.json`; document.body.appendChild(a);
+        a.click(); a.remove(); URL.revokeObjectURL(url);
+      };
+      qs("importLedgerFile").onchange = async (e) => {
+        const f = e.target.files?.[0]; if (!f) return;
+        try {
+          const text = await f.text();
+          const json = JSON.parse(text);
+          const arr = Array.isArray(json) ? json : (Array.isArray(json.ledger) ? json.ledger : []);
+          if (!Array.isArray(arr)) throw new Error("bad");
+          // merge by id
+          const cur = loadLedger(); const map = new Map(cur.map(x => [x.id, x]));
+          for (const d of arr){ if (d && d.id) map.set(d.id, d); }
+          saveLedger(Array.from(map.values()).sort((a,b)=> b.created - a.created));
+          const pkObj = parsePk(getCurrentPk());
+          renderLedger(pkObj, false);
+          e.target.value = "";
+        } catch(err){ alert("Invalid import file."); }
+      };
+
+      // Persist settings on change
+      qs("orgName").addEventListener("change", saveSettingsFromUI);
+      qs("currency").addEventListener("change", saveSettingsFromUI);
+
+      // ----------------- Init -----------------
+      const state = detectRegion();
+      setRegionUI(state);
+      renderSavedKeysQuickPick();
+      updateSettingsUI();
+
+      // Load pk from URL or storage
+      const urlPK = new URL(location.href).searchParams.get("pk");
+      if (urlPK){ qs("pkInput").value = urlPK; await usePk(); }
+      else if (getCurrentPk()){ qs("pkInput").value = getCurrentPk(); await usePk(); }
+
+      // Enable donate if both region and pk are OK
+      qs("donateBtn").disabled = !(state.allowed && getCurrentPk());
+    })();
+  </script>
+</body>
+</html>
